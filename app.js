@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const ApiRoutes = require('./routes/api.routes');
 const config = require('./config/config');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const app = express();
 
@@ -16,9 +17,7 @@ mongoose.connect(`mongodb://localhost:27017/${config.mongodb_db_name}`, function
     console.log('Mongodb successfully connected');
 });
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.use(cors());
 
 app.use(function(req, res, next){
     res.sendWithCode = function(data,statusCode = 200,statusText = 'success'){
