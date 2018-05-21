@@ -3,7 +3,7 @@ const router = express.Router();
 const UserRole = require('../models/user-role.model');
 
 router.get('/',function(req,res,next){
-    UserRole.find().exec().then(roles=>{
+    UserRole.find().populate('users').exec().then(roles=>{
         res.respondSuccess(roles);
     });
 });

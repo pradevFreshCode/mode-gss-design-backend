@@ -5,4 +5,4 @@ COPY package.json /opt/mode-gss-design-backend
 RUN npm install
 COPY . /opt/mode-gss-design-backend
 EXPOSE 3000
-CMD [ “npm”, “start” ]
+CMD [ "npm", “dev” ]

@@ -1,0 +1,7 @@
+{
+  "port": 3000,
+  "mongodb_db_name": "mode-gss-design-backend",
+  "password_hash_salt_length": 10,
+  "admin_user_login": "admin",
+  "admin_user_password": "admin"
+}

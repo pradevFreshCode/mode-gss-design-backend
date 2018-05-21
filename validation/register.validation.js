@@ -2,7 +2,8 @@ const Joi = require('joi');
 
 module.exports = {
     body: {
-        name: Joi.string().required(),
+        firstName: Joi.string().required(),
+        lastName: Joi.string(),
         login: Joi.string().required(),
         password: Joi.string().required(),
         email: Joi.string().email()
