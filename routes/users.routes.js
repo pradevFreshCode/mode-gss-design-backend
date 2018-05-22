@@ -82,4 +82,8 @@ router.delete('/:id', function (req, res) {
     })
 });
 
+router.get('/confirm_email/:id', function (req, res) {
+
+});
+
 module.exports = router;

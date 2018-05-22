@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const userRoleSchema = Schema({
     _id: {
         type: Schema.Types.ObjectId,
-        default: mongoose.Types.ObjectId()
+        default: function () { return new mongoose.Types.ObjectId() }
     },
     name: String,
     created: {

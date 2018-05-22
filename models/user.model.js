@@ -7,7 +7,7 @@ const UserRole = require("./user-role.model");
 const userSchema = Schema({
     _id: {
         type: Schema.Types.ObjectId,
-        default: new mongoose.Types.ObjectId()
+        default: function () { return new mongoose.Types.ObjectId() }
     },
     firstName: String,
     lastName: String,
