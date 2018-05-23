@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt-nodejs');
-const config = require(__dirname + '/../config/jwtOptions.json');
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config.json')[env];
 const Schema = mongoose.Schema;
 const UserRole = require("./user-role.model");
 
@@ -18,11 +19,13 @@ const userSchema = Schema({
         type: Date,
         default: Date.now
     },
-    role: { type: Schema.Types.ObjectId, ref: 'UserRole' }
+    role: { type: Schema.Types.ObjectId, ref: 'UserRole' },
+    confirmedAt: Schema.Types.Date,
+    lastActivationCode: String
 });
 
 userSchema.methods.setPassword = function (newPassword) {
-    this.password = bcrypt.hashSync(newPassword, config.password_hash_salt_length);
+    this.password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(config.password_hash_salt_rounds || 10));
 };
 
 userSchema.methods.compareHash = function (password) {

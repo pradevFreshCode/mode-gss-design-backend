@@ -7,6 +7,7 @@ const usersUpdateValidation = require('../validation/users/userUpdate');
 
 const env = process.env.NODE_ENV || 'development';
 const User = require('../models/user.model');
+const ConfirmationEmailsSender = require('../classes/confirmationEmailsSender');
 
 router.get('/', function (req, res, next) {
     User.find().populate('role').then(models => {
@@ -36,9 +37,7 @@ router.post('/', validate(usersCreationValidation), function (req, res, next) {
 });
 
 router.get('/:id', function (req, res, next) {
-    User.findOne({
-        id: req.params.id
-    }).populate('roles').then(user => {
+    User.findById(req.params.id).populate('roles').then(user => {
         if (!user)
             next(new Error('user not found'));
         else{
@@ -48,9 +47,7 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.post('/:id', validate(usersUpdateValidation), function (req, res, next) {
-    User.findOne({
-        id: req.params.id
-    }).then(userToUpdate => {
+    User.findById(req.params.id).then(userToUpdate => {
         if (!userToUpdate)
             next(new Error('user not found'));
         else {
@@ -83,7 +80,31 @@ router.delete('/:id', function (req, res) {
 });
 
 router.get('/confirm_email/:id', function (req, res) {
+    const codeSender = new ConfirmationEmailsSender();
 
+    codeSender.generateCodeAndSendToUser(req.params.id).then(sendInfo => {
+        res.respondSuccess(sendInfo);
+    }, err => {
+        res.respondError(err);
+    })
+});
+
+router.post('/confirm_email/:id', function (req, res, next) {
+    User.findById(req.params.id).then(user => {
+        if (!user.lastActivationCode || user.lastActivationCode !== req.body.confirmationCode) {
+            next(new Error('Confirmation code incorrect!'));
+        } else {
+            user.lastActivationCode = null;
+            user.confirmedAt = Date.now();
+            user.save((err, savedUser) => {
+                if (!err) {
+                    res.respondUpdated(savedUser);
+                }
+            });
+        }
+    }, err => {
+        next(err);
+    });
 });
 
 module.exports = router;

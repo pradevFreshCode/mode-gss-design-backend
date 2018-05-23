@@ -7,7 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('mode-gss-design-backend:server');
 var http = require('http');
-var config = require(__dirname + '/../config/jwtOptions.json');
+
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config.json')[env];
 
 /**
  * Get port from environment and store in Express.

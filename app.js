@@ -5,7 +5,8 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const ApiRoutes = require('./routes/api.routes');
-const config = require('./config/config');
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/config/config.json')[env];
 const mongoose = require('mongoose');
 const cors = require('cors');
 
