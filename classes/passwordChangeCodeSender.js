@@ -2,7 +2,7 @@ const User = require('../models/user.model');
 const InfoEmailSender = require('../classes/infoEmailSender');
 const ShortCodeGenerator = require('../classes/shortCodeGenerator')
 
-class ConfirmationEmailsSender {
+class PasswordChangeCodeSender {
     constructor() {
         this.sender = new InfoEmailSender();
     }
@@ -35,8 +35,8 @@ class ConfirmationEmailsSender {
     _sendEmail(confirmationCode, email, callback = ()=>{}) {
         this.mailOptions = {
             to: email, // list of receivers
-            subject: 'Confirm your email', // Subject line
-            html: `<b>Use this short code to confirm your email</b>` +
+            subject: 'Your short code to change pass', // Subject line
+            html: `<b>Enter this short code to confirm, that you realy want change your password</b>` +
             `</br>` +
             `<b>${confirmationCode}</b>` // html body
         };
@@ -46,10 +46,10 @@ class ConfirmationEmailsSender {
 
     async _generateShortCodeAndSaveToDb(user) {
         const newCode = ShortCodeGenerator._generateCode();
-        user.lastActivationCode = newCode;
+        user.lastPasswordChangeCode = newCode;
         await user.save();
         return newCode;
     }
 }
 
-module.exports = ConfirmationEmailsSender;
+module.exports = PasswordChangeCodeSender;

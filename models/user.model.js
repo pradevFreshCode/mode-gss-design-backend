@@ -21,7 +21,8 @@ const userSchema = Schema({
     },
     role: { type: Schema.Types.ObjectId, ref: 'UserRole' },
     confirmedAt: Schema.Types.Date,
-    lastActivationCode: String
+    lastActivationCode: String,
+    lastPasswordChangeCode: String
 });
 
 userSchema.methods.setPassword = function (newPassword) {
