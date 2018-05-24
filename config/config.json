@@ -1,6 +1,6 @@
 {
   "development": {
-    "port": 3001,
+    "port": 3000,
     "mongodb_db_name": "mode-gss-design-backend",
     "password_hash_salt_rounds": 10,
     "admin_user_login": "admin",
@@ -8,8 +8,8 @@
     "email_confirmation_smtp_host": "smtp-mail.outlook.com",
     "email_confirmation_smtp_port": 587,
     "email_confirmation_smtp_secure": false,
-    "email_confirmation_smtp_auth_user": "p.radev@hotmail.com",
-    "email_confirmation_smtp_auth_password": "17nkpr415l",
+    "email_confirmation_smtp_auth_user": "returnit.inf@outlook.com",
+    "email_confirmation_smtp_auth_password": "1qaz2w3e4r",
     "email_confirmation_smtp_requireTLS": true,
 
     "gosweetspotApiUrl": "api.gosweetspot.com",
@@ -24,8 +24,8 @@
     "email_confirmation_smtp_host": "smtp-mail.outlook.com",
     "email_confirmation_smtp_port": 587,
     "email_confirmation_smtp_secure": false,
-    "email_confirmation_smtp_auth_user": "p.radev@hotmail.com",
-    "email_confirmation_smtp_auth_password": "17nkpr415l",
+    "email_confirmation_smtp_auth_user": "returnit.inf@outlook.com",
+    "email_confirmation_smtp_auth_password": "1qaz2w3e4r",
     "email_confirmation_smtp_requireTLS": true,
 
     "gosweetspotApiUrl": "api.gosweetspot.com",

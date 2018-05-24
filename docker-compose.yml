@@ -4,10 +4,15 @@ services:
     container_name: mode-gss-design-backend
     restart: always
     build: .
+    volumes:
+      - .:/usr/src/app
     ports:
       - "3000:3000"
     links:
       - mongo
+    environment:
+      PORT: 3000
+    command: npm run dev
   mongo:
     container_name: mode-gss-design-mongo
     image: mongo

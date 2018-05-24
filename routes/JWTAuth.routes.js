@@ -21,7 +21,7 @@ router.get('/me', passport.authenticate('jwt', {session: false}), function (req,
         if (!user) {
             next(new Error('user not found'));
         } else {
-            res.respondSuccess({user: user})
+            res.respondSuccess({user: user});
         }
     });
 });

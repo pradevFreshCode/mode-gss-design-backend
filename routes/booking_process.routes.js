@@ -69,9 +69,7 @@ router.post('/pickup', function (req, res, next) {
 router.post('/post_shipments', JWTStrategyPassportProvider.authorizeIfAuthHeaderExits, function (req, res, next){
     const shipmentRequestObject = req.body;
 
-    res.respondSuccess(shipmentRequestObject);
-
-    return;
+    // res.respondSuccess(shipmentRequestObject);
 
     const postData = querystring.stringify(shipmentRequestObject);
     const postOptions = {
@@ -92,6 +90,7 @@ router.post('/post_shipments', JWTStrategyPassportProvider.authorizeIfAuthHeader
             responseString += data;
         });
         response.on("end", function () {
+            console.log(responseString);
             const responseObject = JSON.parse(responseString.trim());
 
             const dataToSave = Object.assign({}, shipmentRequestObject, responseObject);
