@@ -4,11 +4,53 @@ const router = express.Router();
 const validate = require('express-validation');
 const usersCreationValidation = require('../validation/users/userCreation');
 const usersUpdateValidation = require('../validation/users/userUpdate');
+const passport = require("passport");
+const JWTStrategyPassportProvider = require('../classes/JWTStrategyPassportProvider');
 
 const env = process.env.NODE_ENV || 'development';
 const User = require('../models/user.model');
 const ConfirmationEmailsSender = require('../classes/confirmationEmailsSender');
 const PasswordChangeCodeSender = require('../classes/passwordChangeCodeSender');
+
+router.get('/change_password/:login', function (req, res, next) {
+    const codeSender = new PasswordChangeCodeSender();
+
+    User.findOne({login: req.params.login}).then(user => {
+        if (!user) {
+            next(new Error('No users with this login'));
+        } else {
+            codeSender.generateCodeAndSendToUser(user._id).then(sendInfo => {
+                res.respondSuccess(sendInfo);
+            }, err => {
+                res.respondError(err);
+            })
+        }
+    }, err => {
+        next(err);
+    });
+});
+
+router.post('/change_password/:login', function (req, res, next) {
+    User.findOne({login: req.params.login}).then(user => {
+        if (!user) {
+            next(new Error('No user with this email'));
+        } else if (!user.lastPasswordChangeCode || user.lastPasswordChangeCode !== req.body.confirmationCode) {
+            next(new Error('Confirmation code incorrect!'));
+        } else {
+            user.lastPasswordChangeCode = null;
+            user.setPassword(req.body.newPassword);
+            user.save((err, savedUser) => {
+                if (!err) {
+                    res.respondUpdated(savedUser);
+                }
+            });
+        }
+    }, err => {
+        next(err);
+    });
+});
+
+router.use('/', passport.authenticate('jwt', {session: false}));
 
 router.get('/', function (req, res, next) {
     User.find().populate('role').then(models => {
@@ -97,42 +139,6 @@ router.post('/confirm_email/:id', function (req, res, next) {
         } else {
             user.lastActivationCode = null;
             user.confirmedAt = Date.now();
-            user.save((err, savedUser) => {
-                if (!err) {
-                    res.respondUpdated(savedUser);
-                }
-            });
-        }
-    }, err => {
-        next(err);
-    });
-});
-
-router.get('/change_password', function (req, res, next) {
-    const codeSender = new PasswordChangeCodeSender();
-
-    User.findOne({email:req.body.email}).then(user => {
-        codeSender.generateCodeAndSendToUser(user._id).then(sendInfo => {
-            res.respondSuccess(sendInfo);
-        }, err => {
-            res.respondError(err);
-        })
-    }, err => {
-        next(err);
-    });
-});
-
-router.post('/change_password', function (req, res, next) {
-    User.find({
-        email: req.body.email
-    }).then(user => {
-        if (!user) {
-            next(new Error('No user with this email'));
-        } else if (!user.lastPasswordChangeCode || user.lastPasswordChangeCode !== req.body.confirmationCode) {
-            next(new Error('Confirmation code incorrect!'));
-        } else {
-            user.lastPasswordChangeCode = null;
-            user.setPassword(req.body.newPassword);
             user.save((err, savedUser) => {
                 if (!err) {
                     res.respondUpdated(savedUser);
