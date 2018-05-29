@@ -98,7 +98,7 @@ router.post('/:id', validate(usersUpdateValidation), function (req, res, next) {
             if (!!req.body.login) userToUpdate.login = req.body.login;
             if (!!req.body.email) userToUpdate.email = req.body.email;
             if (!!req.body.phone) userToUpdate.phone = req.body.phone;
-            if (!!req.body.role_id) userToUpdate.role_id = req.body.role_id;
+            if (!!req.body.role) userToUpdate.role = req.body.role;
 
             if (!!req.body.password) userToUpdate.setPassword(req.body.password);
 
