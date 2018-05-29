@@ -67,11 +67,11 @@ router.post('/pickup', function (req, res, next) {
 });
 
 router.post('/post_shipments', JWTStrategyPassportProvider.authorizeIfAuthHeaderExits, function (req, res, next){
-    const shipmentRequestObject = req.body;
+    const shipmentRequestObject = removeServiceFields(req.body.shipmentRequest);
 
     // res.respondSuccess(shipmentRequestObject);
 
-    const postData = querystring.stringify(shipmentRequestObject);
+    const postData = JSON.stringify(shipmentRequestObject);
     const postOptions = {
         host: config.gosweetspotApiUrl,
         port: '80',
@@ -96,14 +96,32 @@ router.post('/post_shipments', JWTStrategyPassportProvider.authorizeIfAuthHeader
             const dataToSave = Object.assign({}, shipmentRequestObject, responseObject);
             if (!!req.user) {
                 ProcessedShipment.saveParsedResponseObject(dataToSave, req.user._id).then(savedData => {
-                    res.respondSuccess(savedData);
+                    ProcessedShipment.findById(savedData._id)
+                        .populate({
+                            path: 'Origin',
+                            populate: {path: 'Address'}
+                        })
+                        .populate({
+                            path: 'Destination',
+                            populate: {path: 'Address'}
+                        })
+                        .populate({
+                            path: 'user',
+                            populate: {path: 'role'}
+                        })
+                        .populate('Packages')
+                        .populate('Consignments').then(shipment => {
+                        if (!shipment)
+                            next(new Error('shipment not found'));
+                        else
+                            res.respondSuccess(shipment);
+                    });
                 }, err => {
                     next(err);
                 });
             } else {
                 res.respondSuccess(dataToSave);
             }
-
         });
     });
 
@@ -112,3 +130,20 @@ router.post('/post_shipments', JWTStrategyPassportProvider.authorizeIfAuthHeader
 });
 
 module.exports = router;
+
+
+function removeServiceFields(object) {
+    if (object.hasOwnProperty('_id')) {
+        delete object._id;
+    }
+    if (object.hasOwnProperty('Id')) {
+        delete object.Id;
+    }
+    Object.keys(object).forEach(key => {
+        if(object[key] && typeof object[key] === 'object') {
+            object[key] = removeServiceFields(object[key]);
+        }
+    });
+
+    return object;
+}
