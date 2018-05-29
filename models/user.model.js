@@ -13,7 +13,11 @@ const userSchema = Schema({
     firstName: String,
     lastName: String,
     email: String,
-    login: { type: String, required: true },
+    login: {
+        type: String,
+        required: true,
+        unique: true,
+        dropDups: true},
     password: { type: String, required: true },
     created: {
         type: Date,
