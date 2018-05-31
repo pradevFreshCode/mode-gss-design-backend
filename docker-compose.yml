@@ -7,11 +7,11 @@ services:
     volumes:
       - .:/usr/src/app
     ports:
-      - "3000:3000"
+      - "3001:3001"
     links:
       - mongo
     environment:
-      PORT: 3000
+      PORT: 3001
     command: npm run dev
   mongo:
     container_name: mode-gss-design-mongo
