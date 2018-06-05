@@ -49,7 +49,20 @@ router.post('/pickup', function (req, res, next) {
             if (matches && matches.length) {
                 const outcomeMessage = matches[1];
                 if (outcomeMessage) {
-                    res.respondSuccess(outcomeMessage.trim());
+                    if (req.body.StoredProcessingObjectId) {
+                      ProcessedShipment.findById(req.body.StoredProcessingObjectId).then(processingObject => {
+                        processingObject.IsPickupRequested = true;
+                        processingObject.save().then(saved => {
+                          res.respondSuccess(outcomeMessage.trim());
+                        }, err => {
+                          res.respondError('Shipment requested, but cannot be stored to our history');
+                        });
+                      }, err => {
+                        res.respondError('Shipment requested, but cannot be stored to our history');
+                      });
+                    } else {
+                      res.respondSuccess(outcomeMessage.trim());
+                    }
                 } else {
                     res.respondError('Something went wrong');
                 }

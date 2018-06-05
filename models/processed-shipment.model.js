@@ -56,6 +56,7 @@ const processedShipmentSchema = Schema({
     HasSaturdayDeliveryLabel: Schema.Types.Boolean,
     Cost: Schema.Types.Number,
     user: {type: Schema.Types.ObjectId, ref: 'User'},
+    IsPickupRequested: Schema.Types.Boolean
 });
 
 const ProcessedShipment = mongoose.model('ProcessedShipment', processedShipmentSchema);
